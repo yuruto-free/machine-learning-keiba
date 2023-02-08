@@ -1,0 +1,4 @@
+# ignore collected files in data directories
+html/
+master/
+raw/
