@@ -1,4 +1,4 @@
 # ignore collected files
-*.pickle
-*.pkl
-*.csv
+*.bin
+*.html
+*.htm
