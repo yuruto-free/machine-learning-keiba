@@ -1,0 +1,4 @@
+# ignore collected files
+*.bin
+*.html
+*.htm

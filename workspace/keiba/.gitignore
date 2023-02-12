@@ -1,4 +1,2 @@
-# ignore collected files in data directories
-data/
 # ignore model files
 models/
