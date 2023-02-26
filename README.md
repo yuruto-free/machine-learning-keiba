@@ -36,3 +36,9 @@
     ```bash
     http://server-ip-address:18580/
     ```
+
+## 処理
+1. 上記の手順でJupyterLabのページにアクセスする。
+1. `scrape.ipynb`を立ち上げ、`_RaceParams`、`ExecParams`の内容を自身の目的に合わせて変更する。
+1. 「Run」→「Run All Cells」を押下し、スクレイピングを実施する。（暫くかかる）
+1.  3.の処理終了後、`preprocess_learning.ipynb`を起動し、「Run」→「Run All Cells」を押下し、前処理・学習・評価を行う。
