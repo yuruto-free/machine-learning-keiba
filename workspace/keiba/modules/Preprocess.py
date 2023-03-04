@@ -171,8 +171,8 @@ class Preprocess:
         # columnのスペースを削除
         df = df.set_axis(df.columns.map(lambda x: x.replace(' ', '')), axis='columns', copy=False)
         # RANKが数字以外のものは削除・降着判定されたものも正しく扱う
-        df = df[df[ResultsCols.RANK].str.contains('^\d+', na=False)]
-        df[ResultsCols.RANK] = df[ResultsCols.RANK].str.replace('\D+', '', regex=True).map(int)
+        df = df[df[ResultsCols.RANK].str.contains('^\d+', na=True)].dropna(subset=[ResultsCols.RANK], axis=0)
+        df[ResultsCols.RANK] = df[ResultsCols.RANK].replace('\D+', '', regex=True).map(int)
         # 抽出する列を指定
         same_cols = [
             ResultsCols.FRAME_NUMBER,
@@ -265,9 +265,9 @@ class Preprocess:
         df.drop(columns='popular', inplace=True)
         # ワイドと複勝を分割
         judge = df['type'].isin(['ワイド', '複勝'])
-        filtered_df = df.loc[~judge, :].apply(lambda x: x.str.replace(' ', ''))
-        matched = df.loc[judge, 'matched'].str.replace(r'\s-\s', '-', regex=True).str.split()
-        price = df.loc[judge, ['type', 'price']].apply(lambda x: x.str.split() if x.name != 'type' else x)
+        filtered_df = df.loc[~judge, :].apply(lambda x: str(x).replace(' ', ''))
+        matched = df.loc[judge, 'matched'].replace(r'\s-\s', '-', regex=True).str.split()
+        price = df.loc[judge, ['type', 'price']].apply(lambda x: str(x).split() if x.name != 'type' else x)
         modified_df = pd.concat([matched.explode(), price.explode('price')], axis=1)
         # バラバラにしたデータを結合・整形
         results = pd.concat([filtered_df, modified_df]).sort_index().fillna(0)
@@ -293,10 +293,10 @@ class Preprocess:
         # columnのスペースを削除
         df = df.set_axis(df.columns.map(lambda x: x.replace(' ', '')), axis='columns', copy=False)
         # RANKが数字以外のものは削除・降着判定されたものも正しく扱う
-        df = df[df[HorseResultsCols.RANK].str.contains('^\d+', na=False)]
-        df[HorseResultsCols.RANK] = df[HorseResultsCols.RANK].str.replace('\D+', '', regex=True).map(int)
-        # HORSE_WEIGHTが不適切なものは削除
-        df = df[df[HorseResultsCols.HORSE_WEIGHT].str.contains('^\d+', na=False)]
+        df = df[df[HorseResultsCols.RANK].str.contains('^\d+', na=True)].dropna(subset=[
+            HorseResultsCols.RANK, HorseResultsCols.R
+        ], how='any', axis=0)
+        df[HorseResultsCols.RANK] = df[HorseResultsCols.RANK].replace('\D+', '', regex=True).map(int)
         # GROUND_STATEがNaNとなっているものを削除
         df = df.dropna(subset=[HorseResultsCols.GROUND_STATE], how='any', axis=0)
         # PRIZEの値の補完
@@ -316,7 +316,7 @@ class Preprocess:
             lambda x: Master.GROUND_STATES[x]
         )
         # PLACEのフォーマット変更
-        df[HorseResultsCols.PLACE] = df[HorseResultsCols.PLACE].str.replace('\d', '', regex=True)
+        df[HorseResultsCols.PLACE] = df[HorseResultsCols.PLACE].replace('\d', '', regex=True)
         # 抽出する列を指定
         same_cols = [
             HorseResultsCols.DATE,
