@@ -265,9 +265,9 @@ class Preprocess:
         df.drop(columns='popular', inplace=True)
         # ワイドと複勝を分割
         judge = df['type'].isin(['ワイド', '複勝'])
-        filtered_df = df.loc[~judge, :].apply(lambda x: str(x).replace(' ', ''))
+        filtered_df = df.loc[~judge, :].apply(lambda x: x.str.replace(' ', ''))
         matched = df.loc[judge, 'matched'].replace(r'\s-\s', '-', regex=True).str.split()
-        price = df.loc[judge, ['type', 'price']].apply(lambda x: str(x).split() if x.name != 'type' else x)
+        price = df.loc[judge, ['type', 'price']].apply(lambda x: x.str.split() if x.name != 'type' else x)
         modified_df = pd.concat([matched.explode(), price.explode('price')], axis=1)
         # バラバラにしたデータを結合・整形
         results = pd.concat([filtered_df, modified_df]).sort_index().fillna(0)
